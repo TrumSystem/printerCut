@@ -59,7 +59,7 @@ class PrintrController extends Controller
             $printer->setEmphasis(false);
             $printer->text($this->left($quantidade, 14));
             $printer->text($this->center($unitario, 14));
-            $printer->text($this->right($total, 17) . "\n");
+            $printer->text($this->right($total, 16) . "\n");
             $printer->text($traco);
             $printer->setEmphasis(true);
             //fim foreach
