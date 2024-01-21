@@ -95,7 +95,7 @@ class PrintrController extends Controller
             // Item
             $quantidade = $request->quantidade ?? 1 . "X";
             $unitario = "R$ " . number_format($request->valorTotal, 2, ',', '.');
-            $total = "R$ " . number_format($request->valorTotal * $request->quantidade ?? 1, 2, ',', '.');
+            $total = "R$ " . number_format($request->valorTotal, 2, ',', '.');
 
             // Calcula a quantidade de espaços necessários para alinhar
 
@@ -122,7 +122,7 @@ class PrintrController extends Controller
 
             $printer->text($traco);
             $printer->setEmphasis(true);
-            $totalPagar = ($request->taxa ?? 0.00) + ($request->valorTotal * $request->quantidade ?? 1);
+            $totalPagar = ($request->taxa ?? 0.00) + ($request->valorTotal * 1);
             $printer->text($this->left('Total a Pagar ', 22));
             $printer->text($this->right("R$ " . number_format($totalPagar, 2, ',', '.'), 22) . "\n");
             $printer->setEmphasis(false);
@@ -142,7 +142,7 @@ class PrintrController extends Controller
 
             $printer->feed();
             $printer->text($this->center("---- Obs: ----") . "\n");
-            $printer->text($this->left($request->obs . "\n"));
+            $printer->text($this->left($request->obs) . "\n");
             $printer->text($traco);
 
             // Informações do Produto
