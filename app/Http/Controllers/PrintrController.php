@@ -82,14 +82,16 @@ class PrintrController extends Controller
             $printer->text($this->left('Total a Pagar ', 22));
             $printer->text($this->right("R$ 1.356,99", 22) . "\n");
             $printer->setEmphasis(false);
-
+            $printer->feed();
+            $printer->text("  ---- Forma de Pagamento: ----\n");
             // Detalhes de Pagamento
             //inicio foreach forma de pagamento
-            $printer->text("  ---- Forma de Pagamento: ----\n");
+
 
             $printer->text($this->left('Dinheiro ', 22));
             $printer->text($this->right("R$ 1.356,99", 22) . "\n");
             //fim oreach forma de pagamento
+            $printer->feed();
             $printer->text("  ---- Obs: ----\n");
             $printer->text("Entrada de R$350,00 a Vista (Dinheiro ou Pix) 10x\n");
             $printer->text("de R$ 114,00\n");
