@@ -22,7 +22,7 @@ class PrintrController extends Controller
             // Configuração da impressora
             $printer = $this->printer;
             $traco = str_repeat('-', max(0, 44));
-            $traco = "  " . $traco . "  \n";
+            $traco = $traco . "  \n";
             $inicioString = "  ";
             // Cabeçalho
             $printer->setJustification(Printer::JUSTIFY_CENTER);
@@ -32,6 +32,7 @@ class PrintrController extends Controller
             $printer->text("20/01/2024 11:46 am\n");
             $printer->feed();
             // Detalhes do Cliente
+            $printer->setPrintLeftMargin(16 * 2);
             $printer->setJustification(Printer::JUSTIFY_LEFT);
 
             $printer->text($this->left('Cliente: ISAAC DA SILVA VINCENTE') . "\n");
@@ -125,7 +126,7 @@ class PrintrController extends Controller
     private function left($texto, $quantidadeCaracter = 44)
     {
         $espacos = str_repeat(' ', max(0, ($quantidadeCaracter) - strlen($texto)));
-        return "  " . $texto . $espacos;
+        return $texto . $espacos;
     }
 
     private function center($texto, $quantidadeCaracter = 44)
