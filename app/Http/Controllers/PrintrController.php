@@ -36,7 +36,7 @@ class PrintrController extends Controller
 
             $printer->text($this->left('Cliente: ISAAC DA SILVA VINCENTE') . "\n");
             $printer->text($this->left("CPF/CNPJ: 000.000.000-00") . "\n");
-            $printer->text($this->left("Tel: (83) 0000-0000") . "n");
+            $printer->text($this->left("Tel: (83) 0000-0000") . "\n");
             $printer->text($this->left("Vendedor: Eduardo") . "\n");
             $printer->text($this->left("Venda nº 000000") . "\n");
             $printer->text($traco);
@@ -44,8 +44,8 @@ class PrintrController extends Controller
 
             $printer->text($this->left("descricao", 14));
             $printer->text($this->left("Qtd/Unidade ", 14));
-            $printer->text($this->left("Total", 16) . "\n");
-
+            $printer->text($this->right("Total", 16) . "\n");
+            $printer->text($traco);
             // Item
 
             $finalString = "  ";
@@ -56,45 +56,41 @@ class PrintrController extends Controller
 
             // Calcula a quantidade de espaços necessários para alinhar
 
-            $espacosQuantidade = str_repeat(' ', max(0, 14 - strlen($quantidade)));
-            $espacosUnitario = str_repeat(' ', max(0, 14 - strlen($unitario)));
-            $espacosTotal = str_repeat(' ', max(0, 16 - strlen($total)));
+            //inicio foreach
             $printer->setEmphasis(true);
-            $printer->text($descricao);
+            $printer->text($this->left($descricao) . "\n");
             $printer->setEmphasis(false);
-            // Concatena as partes com os espaços para alinhar
-            $linhaItem = $inicioString
-                . $quantidade
-                . $espacosQuantidade
-                . $unitario
-                . $espacosUnitario
-                . $espacosTotal
-                . $total
-                . $finalString
-                . "\n";
-
-            // Imprime a linha do item
-            $printer->text($linhaItem);
+            $printer->text($this->left($quantidade, 14));
+            $printer->text($this->left($unitario, 14));
+            $printer->text($this->right($total, 16) . "\n");
             $printer->text($traco);
             $printer->setEmphasis(true);
+            //fim foreach
 
-            $totalProduto = "Total Prdutos";
-            $valorTotal = "R$ 1.349,99";
-
-            $espacoTotalProduto = str_repeat(' ', max(0, 22 - strlen($totalProduto)));
-            $espacoValorTotal = str_repeat(' ', max(0, 22 - strlen($valorTotal)));
-            $linhaResultado = "  " . $totalProduto . $espacoTotalProduto . $espacoValorTotal . $valorTotal . "  \n";
-            $printer->text($linhaResultado);
+            $printer->text($this->left("Total Prdutos", 22));
+            $printer->text($this->right("R$ 1.349,99", 22) . "\n");
             $printer->setEmphasis(false);
-            $printer->text("Subtotal                   R$ 1.349,99\n");
-            $printer->text("Taxa Entr./Frete           R$ 7,00\n");
+
+            $printer->text($this->left('Subtotal', 22));
+            $printer->text($this->right("R$ 1.349,99", 22) . "\n");
+
+            $printer->text($this->left('Taxa Entr./Frete', 22));
+            $printer->text($this->right("R$ 7,00", 22) . "\n");
+
             $printer->text($traco);
             $printer->setEmphasis(true);
-            $printer->text("Total a Pagar              R$ 1.356,99\n");
+            $printer->text($this->left('Total a Pagar ', 22));
+            $printer->text($this->right("R$ 1.356,99", 22) . "\n");
             $printer->setEmphasis(false);
 
             // Detalhes de Pagamento
-            $printer->text("Dinheiro                   R$ 1.356,99\n");
+            //inicio foreach forma de pagamento
+            $printer->text("  ---- Forma de Pagamento: ----\n");
+
+            $printer->text($this->left('Dinheiro ', 22));
+            $printer->text($this->right("R$ 1.356,99", 22) . "\n");
+            //fim oreach forma de pagamento
+            $printer->text("  ---- Obs: ----\n");
             $printer->text("Entrada de R$350,00 a Vista (Dinheiro ou Pix) 10x\n");
             $printer->text("de R$ 114,00\n");
             $printer->text("Vendedor: Eduardo\n");
