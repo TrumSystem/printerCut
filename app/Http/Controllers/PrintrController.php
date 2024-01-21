@@ -134,7 +134,7 @@ class PrintrController extends Controller
 
     private function right($texto, $quantidadeCaracter = 44)
     {
-        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter) - strlen($texto)));
-        return $espacos . $texto . "  ";
+        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter - 2) - strlen($texto)));
+        return $espacos . $texto;
     }
 }
