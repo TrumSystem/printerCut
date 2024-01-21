@@ -43,7 +43,7 @@ class PrintrController extends Controller
 
 
             $printer->text($this->left("descricao", 14));
-            $printer->text($this->left("Qtd/Unidade ", 14));
+            $printer->text($this->center("Qtd/Unidade ", 14));
             $printer->text($this->right("Total", 14) . "\n");
             $printer->text($traco);
             // Item
