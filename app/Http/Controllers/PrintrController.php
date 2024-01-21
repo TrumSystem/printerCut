@@ -16,7 +16,7 @@ class PrintrController extends Controller
         $this->printer = new Printer($connector);
     }
 
-    public function cupon()
+    public function cupon(Request $request)
     {
         try {
             // Configuração da impressora
@@ -50,9 +50,9 @@ class PrintrController extends Controller
 
             $finalString = "  ";
             $descricao = "Redmi Note 128 GB PRETO";
-            $quantidade = "1X";
-            $unitario = "R$ 1.349,99";
-            $total = "R$ 1.349,99";
+            $quantidade = $request->quantidade . "X";
+            $unitario = "R$ " . number_format($request->valor, 2, ',', '.');
+            $total = "R$ " . number_format($request->valor * $request->quantidade, 2, ',', '.');
 
             // Calcula a quantidade de espaços necessários para alinhar
 
@@ -68,19 +68,20 @@ class PrintrController extends Controller
             //fim foreach
 
             $printer->text($this->left("Total Prdutos", 22));
-            $printer->text($this->right("R$ 1.349,99", 22) . "\n");
+            $printer->text($this->right($total, 22) . "\n");
             $printer->setEmphasis(false);
 
             $printer->text($this->left('Subtotal', 22));
-            $printer->text($this->right("R$ 1.349,99", 22) . "\n");
+            $printer->text($this->right($total, 22) . "\n");
 
             $printer->text($this->left('Taxa Entr./Frete', 22));
-            $printer->text($this->right("R$ 7,00", 22) . "\n");
+            $printer->text($this->right("R$ " . number_format($request->taxa ?? 0.00, 2, ',', '.'), 22) . "\n");
 
             $printer->text($traco);
             $printer->setEmphasis(true);
+            $totalPagar = ($request->taxa ?? 0.00) + ($request->valor * $request->quantidade);
             $printer->text($this->left('Total a Pagar ', 22));
-            $printer->text($this->right("R$ 1.356,99", 22) . "\n");
+            $printer->text($this->right("R$ " . $totalPagar, 22) . "\n");
             $printer->setEmphasis(false);
             $printer->feed();
             $printer->text("  ---- Forma de Pagamento: ----\n");
