@@ -164,6 +164,8 @@ class PrintrController extends Controller
             // Finalizar impressão
             $printer->cut();
             $printer->close();
+
+            return $request->all();
         } catch (\Exception $e) {
             echo "Não foi possível imprimir: " . $e->getMessage() . "\n";
         }
