@@ -128,7 +128,7 @@ class PrintrController extends Controller
 
     private function center($texto, $quantidadeCaracter = 44)
     {
-        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter / 2) - strlen($texto)));
+        $espacos = str_repeat(' ', max(0, (($quantidadeCaracter) - strlen($texto)) / 2));
         return $espacos . $texto . $espacos;
     }
 
