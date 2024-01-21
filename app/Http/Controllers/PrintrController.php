@@ -35,14 +35,16 @@ class PrintrController extends Controller
             $printer->setJustification(Printer::JUSTIFY_LEFT);
 
             $printer->text($this->left('Cliente: ISAAC DA SILVA VINCENTE') . "\n");
-            $printer->text("CPF/CNPJ: 000.000.000-00\n");
-            $printer->text("Tel: (83) 0000-0000\n");
-            $printer->text("Vendedor: Eduardo\n");
-            $printer->text("Venda nº 000000\n");
+            $printer->text($this->left("CPF/CNPJ: 000.000.000-00") . "\n");
+            $printer->text($this->left("Tel: (83) 0000-0000") . "n");
+            $printer->text($this->left("Vendedor: Eduardo") . "\n");
+            $printer->text($this->left("Venda nº 000000") . "\n");
             $printer->text($traco);
 
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
-            $printer->text("  Descricao         Qtd/Unidade       Total\n");
+
+            $printer->text($this->left("descricao", 14));
+            $printer->text($this->left("Qtd/Unidade ", 14));
+            $printer->text($this->left("Total", 16) . "\n");
 
             // Item
 
@@ -124,8 +126,8 @@ class PrintrController extends Controller
 
     private function left($texto, $quantidadeCaracter = 44)
     {
-        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter + 2) - strlen($texto)));
-        return $texto . $espacos;
+        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter) - strlen($texto)));
+        return "  " . $texto . $espacos;
     }
 
     private function center($texto, $quantidadeCaracter = 44)
@@ -137,6 +139,6 @@ class PrintrController extends Controller
     private function right($texto, $quantidadeCaracter = 44)
     {
         $espacos = str_repeat(' ', max(0, ($quantidadeCaracter + 2) - strlen($texto)));
-        return $espacos . $texto;
+        return $espacos . $texto . "  ";
     }
 }
