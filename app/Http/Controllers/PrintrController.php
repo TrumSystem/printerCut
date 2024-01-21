@@ -12,7 +12,6 @@ class PrintrController extends Controller
 
     public function __construct()
     {
-        
         $connector = new WindowsPrintConnector("smb://localhost/tm-printer");
         $this->printer = new Printer($connector);
     }
@@ -21,7 +20,7 @@ class PrintrController extends Controller
     {
         try {
             // Configuração da impressora
-            $printer = $this->printer; 
+            $printer = $this->printer;
             $traco = str_repeat('-', max(0, 44));
             $traco = "  " . $traco . "  \n";
             $inicioString = "  ";
@@ -34,35 +33,43 @@ class PrintrController extends Controller
             $printer->feed();
             // Detalhes do Cliente
             $printer->setJustification(Printer::JUSTIFY_LEFT);
-            
-            $printer->text("Cliente: ISAAC DA SILVA VICENTE" . "\n");
+
+            $printer->text($this->left('Cliente: ISAAC DA SILVA VINCENTE') . "\n");
             $printer->text("CPF/CNPJ: 000.000.000-00\n");
             $printer->text("Tel: (83) 0000-0000\n");
             $printer->text("Vendedor: Eduardo\n");
             $printer->text("Venda nº 000000\n");
             $printer->text($traco);
-        
+
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->text("  Descricao         Qtd/Unidade       Total\n");
 
             // Item
-            
+
             $finalString = "  ";
             $descricao = $inicioString . "Redmi Note 128 GB PRETO" . $finalString . "\n";
             $quantidade = "1X";
             $unitario = "R$ 1.349,99";
             $total = "R$ 1.349,99";
-           
+
             // Calcula a quantidade de espaços necessários para alinhar
-            
+
             $espacosQuantidade = str_repeat(' ', max(0, 14 - strlen($quantidade)));
             $espacosUnitario = str_repeat(' ', max(0, 14 - strlen($unitario)));
-            $espacosTotal = str_repeat(' ', max(0, 16 - strlen($total))); // Ajuste a quantidade de espaços conforme necessário
+            $espacosTotal = str_repeat(' ', max(0, 16 - strlen($total)));
             $printer->setEmphasis(true);
             $printer->text($descricao);
             $printer->setEmphasis(false);
             // Concatena as partes com os espaços para alinhar
-            $linhaItem = $inicioString . $quantidade . $espacosQuantidade . $unitario . $espacosUnitario . $espacosTotal . $total . $finalString ."\n";
+            $linhaItem = $inicioString
+                . $quantidade
+                . $espacosQuantidade
+                . $unitario
+                . $espacosUnitario
+                . $espacosTotal
+                . $total
+                . $finalString
+                . "\n";
 
             // Imprime a linha do item
             $printer->text($linhaItem);
@@ -83,7 +90,7 @@ class PrintrController extends Controller
             $printer->setEmphasis(true);
             $printer->text("Total a Pagar              R$ 1.356,99\n");
             $printer->setEmphasis(false);
-        
+
             // Detalhes de Pagamento
             $printer->text("Dinheiro                   R$ 1.356,99\n");
             $printer->text("Entrada de R$350,00 a Vista (Dinheiro ou Pix) 10x\n");
@@ -91,12 +98,12 @@ class PrintrController extends Controller
             $printer->text("Vendedor: Eduardo\n");
             $printer->text("Bairro: Tibiri 2\n");
             $printer->text($traco);
-        
+
             // Informações do Produto
             $printer->text("IMEI 1: 000000000000000\n");
             $printer->text("IMEI 2: 000000000000000\n");
             $printer->feed();
-        
+
             // Endereço de Entrega
             $printer->text("Endereco: Rua Deputado Iracio Bento\n");
             $printer->text("Bairro: Tibiri 2\n");
@@ -106,12 +113,30 @@ class PrintrController extends Controller
             $printer->text("Complemento: Principal Nova\n");
             $printer->text("Numero: 181 B\n");
             $printer->feed();
-        
+
             // Finalizar impressão
             $printer->cut();
             $printer->close();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo "Não foi possível imprimir: " . $e->getMessage() . "\n";
         }
+    }
+
+    private function left($texto, $quantidadeCaracter = 44)
+    {
+        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter + 2) - strlen($texto)));
+        return $texto . $espacos;
+    }
+
+    private function center($texto, $quantidadeCaracter = 44)
+    {
+        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter / 2) - strlen($texto)));
+        return $espacos . $texto . $espacos;
+    }
+
+    private function right($texto, $quantidadeCaracter = 44)
+    {
+        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter + 2) - strlen($texto)));
+        return $espacos . $texto;
     }
 }
