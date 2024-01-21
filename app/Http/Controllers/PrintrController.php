@@ -23,7 +23,6 @@ class PrintrController extends Controller
             $printer = $this->printer;
             $traco = str_repeat('-', max(0, 44));
             $traco = $traco . "\n";
-            $inicioString = "  ";
             // Cabeçalho
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->setTextSize(2, 2);
@@ -83,7 +82,7 @@ class PrintrController extends Controller
             $printer->setEmphasis(false);
 
             $printer->feed();
-            $printer->text("  ---- Forma de Pagamento: ----\n");
+            $printer->text($this->center("---- Forma de Pagamento: ----") . "\n");
             // Detalhes de Pagamento
             //inicio foreach forma de pagamento
             $printer->text($this->left('Dinheiro ', 22));
@@ -92,7 +91,7 @@ class PrintrController extends Controller
             $printer->text($traco);
 
             $printer->feed();
-            $printer->text("  ---- Obs: ----\n");
+            $printer->text($this->center("---- Obs: ----") . "\n");
             $printer->text($this->left("Entrada de R$350,00 a Vista (Dinheiro ou Pix) 10x de R$ 114,00\n"));
             $printer->text($traco);
 
