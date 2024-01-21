@@ -44,7 +44,7 @@ class PrintrController extends Controller
 
             $printer->text($this->left("descricao", 14));
             $printer->text($this->left("Qtd/Unidade ", 14));
-            $printer->text($this->right("Total", 16) . "\n");
+            $printer->text($this->right("Total", 14) . "\n");
             $printer->text($traco);
             // Item
 
@@ -134,7 +134,7 @@ class PrintrController extends Controller
 
     private function right($texto, $quantidadeCaracter = 44)
     {
-        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter - 2) - strlen($texto)));
+        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter) - strlen($texto)));
         return $espacos . $texto;
     }
 }
