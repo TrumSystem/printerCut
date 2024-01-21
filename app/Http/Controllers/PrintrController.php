@@ -49,7 +49,7 @@ class PrintrController extends Controller
             // Item
 
             $finalString = "  ";
-            $descricao = $inicioString . "Redmi Note 128 GB PRETO" . $finalString . "\n";
+            $descricao = "Redmi Note 128 GB PRETO";
             $quantidade = "1X";
             $unitario = "R$ 1.349,99";
             $total = "R$ 1.349,99";
@@ -134,7 +134,7 @@ class PrintrController extends Controller
 
     private function right($texto, $quantidadeCaracter = 44)
     {
-        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter + 2) - strlen($texto)));
+        $espacos = str_repeat(' ', max(0, ($quantidadeCaracter) - strlen($texto)));
         return $espacos . $texto . "  ";
     }
 }
