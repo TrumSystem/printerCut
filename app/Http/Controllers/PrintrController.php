@@ -22,7 +22,7 @@ class PrintrController extends Controller
             // Configuração da impressora
             $printer = $this->printer;
             $traco = str_repeat('-', max(0, 44));
-            $traco = $traco . "  \n";
+            $traco = $traco . "\n";
             $inicioString = "  ";
             // Cabeçalho
             $printer->setJustification(Printer::JUSTIFY_CENTER);
@@ -42,14 +42,11 @@ class PrintrController extends Controller
             $printer->text($this->left("Venda nº 000000") . "\n");
             $printer->text($traco);
 
-
             $printer->text($this->left("descricao", 14));
             $printer->text($this->center("Qtd/Unidade ", 14));
             $printer->text($this->right("Total", 16) . "\n");
             $printer->text($traco);
             // Item
-
-            $finalString = "  ";
             $descricao = "Redmi Note 128 GB PRETO";
             $quantidade = $request->quantidade . "X";
             $unitario = "R$ " . number_format($request->valor, 2, ',', '.');
