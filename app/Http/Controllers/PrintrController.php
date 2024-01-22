@@ -101,7 +101,7 @@ class PrintrController extends Controller
 
             //inicio foreach
             $printer->setEmphasis(true);
-            $printer->text($this->left($request->modelo . $request->cor) . "\n");
+            $printer->text($this->left($request->modelo . '  ' . $request->cor) . "\n");
             $printer->setEmphasis(false);
             $printer->text($this->left($quantidade, 14));
             $printer->text($this->center($unitario, 14));
@@ -193,7 +193,7 @@ class PrintrController extends Controller
             $printer->setJustification(Printer::JUSTIFY_LEFT);
 
             $printer->setEmphasis(true);
-            $printer->text($this->left($request->modelo . $request->cor) . "\n");
+            $printer->text("Modelo: " . $this->left($request->modelo . '  ' . $request->cor) . "\n");
             $printer->setEmphasis(false);
 
             $traco = $traco . "\n";
