@@ -8,3 +8,4 @@ Route::get('/', function () {
 });
 
 Route::post('/imprimir/cupon', [PrintrController::class, 'cupon']);
+Route::post('/imprimir/aviso', [PrintrController::class, 'aviso']);

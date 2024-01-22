@@ -177,7 +177,38 @@ class PrintrController extends Controller
             $printer->cut();
             $printer->close();
 
-            return $request->all();
+            return;
+        } catch (\Exception $e) {
+            echo "Não foi possível imprimir: " . $e->getMessage() . "\n";
+        }
+    }
+
+    public function aviso(Request $request)
+    {
+        try {
+            $printer = $this->printer;
+            $traco = str_repeat('-', max(0, 44));
+            $traco = $traco . "\n";
+            $printer->setPrintLeftMargin(16 * 2);
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+
+            $printer->setEmphasis(true);
+            $printer->text($this->left($request->modelo . $request->cor) . "\n");
+            $printer->setEmphasis(false);
+
+            $traco = $traco . "\n";
+
+            $printer->text($this->left("Cliente: $request->cliente") . "\n");
+            $printer->text("Endereco: " . $request->rua . "\n");
+            $printer->text("Bairro: " . $request->bairro . "\n");
+            $printer->text("Cidade: " . $request->cidade . "\n");
+            $printer->text("UF: PB\n");
+            $printer->text($this->left("Venda nº " . $request->numeroOs) . "\n");
+
+            $printer->feed();
+            $printer->cut();
+            $printer->close();
+            return;
         } catch (\Exception $e) {
             echo "Não foi possível imprimir: " . $e->getMessage() . "\n";
         }
