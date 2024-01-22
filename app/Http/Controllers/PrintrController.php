@@ -157,8 +157,8 @@ class PrintrController extends Controller
             $printer->text("CEP: 00000-000\n");
             $printer->text("Cidade: " . $request->cidade . "\n");
             $printer->text("UF: PB\n");
-            $printer->text("Complemento: Principal Nova\n");
-            $printer->text("Numero: 181 B\n");
+            //$printer->text("Complemento:\n");
+            //$printer->text("Numero: 181 B\n");
             $printer->feed();
 
             // Finalizar impressão
