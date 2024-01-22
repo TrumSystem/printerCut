@@ -163,6 +163,18 @@ class PrintrController extends Controller
 
             // Finalizar impressão
             $printer->cut();
+
+            $printer->text($this->left("Cliente: $request->cliente") . "\n");
+            $printer->text($this->left("CPF/CNPJ: " . $this->formatarDocumento($request->cpf)) . "\n");
+            $printer->text($this->left("Tel: " . $this->formatarCelular($request->contato)) . "\n");
+            $printer->text($this->left("Atendente: " . $request->atendente) . "\n");
+            $printer->text($this->left("Venda nº " . $request->numeroOs) . "\n");
+            $printer->text($traco);
+
+            $printer->feed();
+
+            // Finalizar impressão
+            $printer->cut();
             $printer->close();
 
             return $request->all();
