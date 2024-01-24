@@ -178,7 +178,7 @@ class PrintrController extends Controller
             $printer->close();
 
             return;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo "Não foi possível imprimir: " . $e->getMessage() . "\n";
         }
     }
@@ -202,14 +202,21 @@ class PrintrController extends Controller
             $printer->text("Endereco: " . $request->rua . "\n");
             $printer->text("Bairro: " . $request->bairro . "\n");
             $printer->text("Cidade: " . $request->cidade . "\n");
+            $printer->text("Cep: " . $request->cep . "\n");
             $printer->text("UF: PB\n");
             $printer->text($this->left("Venda nº " . $request->numeroOs) . "\n");
+
+            $delivery = $request->delivery == '0' ? 'Retira em Loja' : 'Entrega em Domicilio';
+
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->setTextSize(2, 2);
+            $printer->text($delivery . "\n");
 
             $printer->feed();
             $printer->cut();
             $printer->close();
             return;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo "Não foi possível imprimir: " . $e->getMessage() . "\n";
         }
     }
