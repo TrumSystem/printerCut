@@ -210,8 +210,8 @@ class PrintrController extends Controller
 
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->setTextSize(2, 2);
+            $printer->feed();
             $printer->text($delivery . "\n");
-
             $printer->feed();
             $printer->cut();
             $printer->close();
