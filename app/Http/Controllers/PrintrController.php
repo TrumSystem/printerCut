@@ -185,7 +185,7 @@ class PrintrController extends Controller
 
     public function convertObj($array)
     {
-        return json_decode(json_encode($array),false);
+        return json_decode(json_encode($array), false);
     }
 
     public function cuponNaoFiscal(Request $request)
@@ -252,7 +252,7 @@ class PrintrController extends Controller
             $printer->setEmphasis(true);
             $printer->text($this->left("Total a pagar", 22));
             $printer->text($this->right("R$ " . number_format($pedido->valor_venda, 2, ',', '.'), 22) . "\n");
-            
+
             $printer->setEmphasis(false);
 
             $printer->feed();
@@ -300,10 +300,10 @@ class PrintrController extends Controller
 
         $printer = new Printer($this->connector);
         $printer->text("Hello World!\n");
-            $printer->feed();
-            $printer->feed();
-            $printer->feed();
-            $printer->cut();
+        $printer->feed();
+        $printer->feed();
+        $printer->feed();
+        $printer->cut();
         $printer->close();
         return "Ola mundo!";
         try {
@@ -372,7 +372,7 @@ class PrintrController extends Controller
             $printer->feed();
             $printer->text($delivery . "\n");
             $printer->feed();
-            
+
             $printer->setTextSize(1, 1);
             $printer->text($this->center("Tudo posso naquele que me fortalece.", 44));
             $printer->text($this->center("- Filipenses 4:13 -", 44));
