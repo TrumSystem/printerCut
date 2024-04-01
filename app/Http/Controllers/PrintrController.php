@@ -463,7 +463,7 @@ class PrintrController extends Controller
             $printer->setEmphasis(false);
             $printer->text($traco);
             $printer->text($this->left('Total de Unidade.', 22));
-            $printer->text($this->right($total_unidade . "\n"));
+            $printer->text($this->right($total_unidade, 22) . "\n");
 
             $printer->feed();
             $printer->feed();
