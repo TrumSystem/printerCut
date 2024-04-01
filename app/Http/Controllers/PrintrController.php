@@ -403,4 +403,124 @@ class PrintrController extends Controller
         $espacos = str_repeat(' ', max(0, ($quantidadeCaracter) - strlen($texto)));
         return $espacos . $texto;
     }
+
+    public function imprimirProdutosTransferencia(Request $request)
+    {
+        try {
+            $produtos = $this->convertObj($request->produtos);
+            $loja = $this->convertObj($request->loja);
+            $total_unidade = 0;
+            $subtotal = 0;
+            $valorTotalPedido = 0;
+
+            $printer = new Printer($this->connector);
+            $traco = str_repeat('-', max(0, 44));
+            $traco = $traco . "\n";
+            // Cabeçalho
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->setTextSize(2, 2);
+            $printer->text($this->center($loja->tipo, 14) . "\n");
+            $printer->feed();
+            $printer->setTextSize(1, 1);
+            $printer->text(date("d/m/Y H:i:s", strtotime($loja->created_at ?? '')) . "\n");
+            $printer->feed();
+            // Detalhes do Cliente
+            $printer->setPrintLeftMargin(16 * 2);
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+
+            $printer->text($this->left("Cliente:" . $loja->name ?? '') . "\n");
+
+            $printer->text($this->left("Atendente: " . ($loja->atendente ?? '')) . "\n");
+            $printer->text($this->left("Pedido:" . $loja->idPedido) . "\n");
+            $printer->text($traco);
+
+            $printer->text($this->left("descricao", 14));
+            $printer->text($this->center("Qtd/Unidade ", 14));
+            $printer->text($this->right("Total", 16) . "\n");
+            $printer->text($traco);
+
+            // Item
+            foreach ($produtos as $produto) {
+                $subtotal = ($produto->price_purchase * $produto->estoque);
+                $valorTotalPedido += $subtotal;
+                $total_unidade += $produto->estoque;
+                $quantidade = $produto->estoque . "X";
+                $unitario = "R$ " . number_format($produto->price_purchase, 2, ',', '.');
+                $total = "R$ " . number_format($subtotal, 2, ',', '.');
+
+                $printer->setEmphasis(true);
+                $printer->text($this->left($produto->name) . "\n");
+                $printer->setEmphasis(false);
+                $printer->text($this->left($quantidade, 14));
+                $printer->text($this->center($unitario, 14));
+                $printer->text($this->right($total, 16) . "\n");
+                $printer->text($traco);
+            }
+
+            $printer->text($traco);
+            $printer->text($this->left("Total de Modelo", 22));
+            $printer->text($this->right(count($produtos), 22) . "\n");
+            $printer->setEmphasis(false);
+            $printer->text($traco);
+            $printer->text($this->left('Total de Unidade.', 22));
+            $printer->text($this->right($total_unidade . "\n"));
+
+            $printer->feed();
+            $printer->feed();
+            $printer->cut();
+            $printer->close();
+
+            return response()->json(['success' => 'Impresso com sucesso']);
+        } catch (\Throwable $th) {
+            return response()->json(["error" => $th->getMessage()]);
+        }
+    }
+
+    public function finalizarTransferencia(Request $request)
+    {
+        try {
+            $i = 0;
+            $cupon = 1;
+            $produtos = $this->convertObj($request->produtos);
+            $dados = $this->convertObj($request->all());
+
+            $printer = new Printer($this->connector);
+            $traco = str_repeat('-', max(0, 44));
+            $traco = $traco . "\n";
+            // Cabeçalho
+            if ($dados->possuiImei) {
+                $cupon = $dados->totalCupon;
+            }
+
+            for ($i = 0; $i < $cupon; $i++) {
+                $printer->setJustification(Printer::JUSTIFY_CENTER);
+                $printer->setTextSize(2, 2);
+                $printer->text($this->center('Transferencia', 14) . "\n");
+                $printer->feed();
+                // Detalhes do Cliente
+                $printer->setPrintLeftMargin(16 * 2);
+                $printer->setJustification(Printer::JUSTIFY_LEFT);
+
+                $printer->text($this->left("Cliente:" . $dados->loja ?? '') . "\n");
+                $printer->text($this->left("Pedido:" . $dados->idPedido) . "\n");
+                $printer->text($traco);
+                $printer->feed();
+                $printer->feed();
+
+                $printer->setJustification(Printer::JUSTIFY_CENTER);
+                $printer->setTextSize(3, 3);
+                $printer->text($this->center("(" . $i . "/" . $cupon . ")", 14) . "\n");
+                $printer->feed();
+                $printer->feed();
+
+                $printer->cut();
+            }
+
+            $printer->close();
+
+            return response()->json(['success' => 'Impresso com sucesso']);
+        } catch (\Throwable $th) {
+            return response()->json(["error" => $th->getMessage()]);
+        }
+    }
 }

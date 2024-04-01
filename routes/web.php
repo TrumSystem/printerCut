@@ -13,3 +13,5 @@ Route::get('/imprimir/aviso', [PrintrController::class, 'aviso']);
 Route::get('/imprimir/aviso/Teste', [TestePrintController::class, 'printHelloWorld']);
 Route::get('/imprimir/dados/cliente', [PrintrController::class, 'dadosCliente']);
 Route::post('/imprimir/cupon/pedido', [PrintrController::class, 'cuponNaoFiscal']);
+Route::post('/imprimir/pedido/transferencia', [PrintrController::class, 'imprimirProdutosTransferencia']);
+Route::post('/imprimir/pedido/comprovante/transferencia', [PrintrController::class, 'finalizarTransferencia']);
