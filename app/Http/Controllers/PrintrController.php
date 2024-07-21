@@ -613,7 +613,7 @@ class PrintrController extends Controller
             $printer->setEmphasis(false);
             $printer->text($traco);
             $printer->text($this->left('Total de Unidade.', 22));
-            $printer->text($this->right($total_unidade . "\n"));
+            $printer->text($this->right($total_unidade, 22) . "\n");
 
             $printer->feed();
             $printer->feed();
@@ -659,7 +659,7 @@ class PrintrController extends Controller
 
                 $printer->setJustification(Printer::JUSTIFY_CENTER);
                 $printer->setTextSize(3, 3);
-                $printer->text($this->center("(" . $i . "/" . $cupon . ")", 14) . "\n");
+                $printer->text($this->center("(" . ($i + 1) . "/" . $cupon . ")", 14) . "\n");
                 $printer->feed();
                 $printer->feed();
 
