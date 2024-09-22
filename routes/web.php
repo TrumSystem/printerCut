@@ -17,3 +17,10 @@ Route::get('/imprimir/dados/cliente', [PrintrController::class, 'dadosCliente'])
 Route::post('/imprimir/cupon/pedido', [PrintrController::class, 'cuponNaoFiscal']);
 Route::post('/imprimir/pedido/transferencia', [PrintrController::class, 'imprimirProdutosTransferencia']);
 Route::post('/imprimir/pedido/comprovante/transferencia', [PrintrController::class, 'finalizarTransferencia']);
+
+//---------------------------
+//        Ecommerce
+//---------------------------
+
+
+Route::post('/print/order/ecommerce', [PrintrController::class, 'PrintOrderEcommerce']);

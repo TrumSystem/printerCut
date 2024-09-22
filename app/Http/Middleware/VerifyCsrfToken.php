@@ -18,6 +18,7 @@ class VerifyCsrfToken extends Middleware
         '/imprimir/novo/aviso',
         '/imprimir/cupon/pedido',
         '/imprimir/pedido/transferencia',
-        '/imprimir/pedido/comprovante/transferencia'
+        '/imprimir/pedido/comprovante/transferencia',
+        '/print/order/ecommerce',
     ];
 }

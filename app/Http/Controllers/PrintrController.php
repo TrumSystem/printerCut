@@ -14,7 +14,7 @@ class PrintrController extends Controller
     public function __construct()
     {
         $this->traco = str_repeat('-', max(0, 44)) . "\n";
-        $this->connector = new WindowsPrintConnector("smb://localhost/tm-printer");
+        $this->connector = new WindowsPrintConnector('smb://localhost/tm-printer');
     }
 
     public function inserirQuebraDeLinha($texto, $maxComprimento)
@@ -40,7 +40,7 @@ class PrintrController extends Controller
     private function formatarCelular($celular)
     {
         // Remove qualquer caractere não numérico
-        $celular = preg_replace("/[^0-9]/", "", $celular);
+        $celular = preg_replace('/[^0-9]/', '', $celular);
 
         // Verifica se o número de celular tem 11 dígitos (com o DDD)
         if (strlen($celular) == 11) {
@@ -58,7 +58,7 @@ class PrintrController extends Controller
     private function formatarDocumento($documento)
     {
         // Remove qualquer caractere não numérico
-        $documento = preg_replace("/[^0-9]/", "", $documento);
+        $documento = preg_replace('/[^0-9]/', '', $documento);
 
         // Verifica se o documento é um CPF (11 dígitos) ou CNPJ (14 dígitos)
         if (strlen($documento) == 11) {
@@ -96,27 +96,27 @@ class PrintrController extends Controller
             $printer->setTextSize(2, 2);
             $printer->text("MI JP\n");
             $printer->setTextSize(1, 1);
-            $printer->text(date("d/m/Y H:i:s", strtotime($request->created_at)) . "\n");
+            $printer->text(date('d/m/Y H:i:s', strtotime($request->created_at)) . "\n");
             $printer->feed();
             // Detalhes do Cliente
             $printer->setPrintLeftMargin(16 * 2);
             $printer->setJustification(Printer::JUSTIFY_LEFT);
 
             $printer->text($this->left("Cliente: $request->cliente") . "\n");
-            $printer->text($this->left("CPF/CNPJ: " . $this->formatarDocumento($request->cpf)) . "\n");
-            $printer->text($this->left("Tel: " . $this->formatarCelular($request->contato)) . "\n");
-            $printer->text($this->left("Atendente: " . $request->atendente) . "\n");
-            $printer->text($this->left("Venda nº " . $request->numeroOs) . "\n");
+            $printer->text($this->left('CPF/CNPJ: ' . $this->formatarDocumento($request->cpf)) . "\n");
+            $printer->text($this->left('Tel: ' . $this->formatarCelular($request->contato)) . "\n");
+            $printer->text($this->left('Atendente: ' . $request->atendente) . "\n");
+            $printer->text($this->left('Venda nº ' . $request->numeroOs) . "\n");
             $printer->text($traco);
 
-            $printer->text($this->left("descricao", 14));
-            $printer->text($this->center("Qtd/Unidade ", 14));
-            $printer->text($this->right("Total", 16) . "\n");
+            $printer->text($this->left('descricao', 14));
+            $printer->text($this->center('Qtd/Unidade ', 14));
+            $printer->text($this->right('Total', 16) . "\n");
             $printer->text($traco);
             // Item
-            $quantidade = $request->quantidade ?? 1 . "X";
-            $unitario = "R$ " . number_format($request->valorTotal, 2, ',', '.');
-            $total = "R$ " . number_format($request->valorTotal, 2, ',', '.');
+            $quantidade = $request->quantidade ?? 1 . 'X';
+            $unitario = 'R$ ' . number_format($request->valorTotal, 2, ',', '.');
+            $total = 'R$ ' . number_format($request->valorTotal, 2, ',', '.');
 
             // Calcula a quantidade de espaços necessários para alinhar
 
@@ -131,7 +131,7 @@ class PrintrController extends Controller
             $printer->setEmphasis(true);
             //fim foreach
 
-            $printer->text($this->left("Total Prdutos", 22));
+            $printer->text($this->left('Total Prdutos', 22));
             $printer->text($this->right($total, 22) . "\n");
             $printer->setEmphasis(false);
 
@@ -139,57 +139,57 @@ class PrintrController extends Controller
             $printer->text($this->right($total, 22) . "\n");
 
             $printer->text($this->left('Taxa Entr./Frete', 22));
-            $printer->text($this->right("R$ " . number_format($request->taxa ?? 0.00, 2, ',', '.'), 22) . "\n");
+            $printer->text($this->right('R$ ' . number_format($request->taxa ?? 0.00, 2, ',', '.'), 22) . "\n");
 
             $printer->text($traco);
             $printer->setEmphasis(true);
             $totalPagar = ($request->taxa ?? 0.00) + ($request->valorTotal * 1);
             $printer->text($this->left('Total a Pagar ', 22));
-            $printer->text($this->right("R$ " . number_format($totalPagar, 2, ',', '.'), 22) . "\n");
+            $printer->text($this->right('R$ ' . number_format($totalPagar, 2, ',', '.'), 22) . "\n");
             $printer->setEmphasis(false);
 
             $printer->feed();
-            $printer->text($this->center("---- Forma de Pagamento: ----") . "\n");
+            $printer->text($this->center('---- Forma de Pagamento: ----') . "\n");
             // Detalhes de Pagamento
             //inicio foreach forma de pagamento
             $printer->text($this->left(
-                $request->formaPagamento == "Ávista" ? "Dinheiro" : $request->formaPagamento,
+                $request->formaPagamento == 'Ávista' ? 'Dinheiro' : $request->formaPagamento,
                 22
             ));
 
-            $printer->text($this->right("R$ " . number_format($request->valorTotal, 2, ',', '.'), 22) . "\n");
+            $printer->text($this->right('R$ ' . number_format($request->valorTotal, 2, ',', '.'), 22) . "\n");
             //fim oreach forma de pagamento
             $printer->text($traco);
 
             $printer->feed();
-            $printer->text($this->center("---- Obs: ----") . "\n");
+            $printer->text($this->center('---- Obs: ----') . "\n");
             $printer->text($this->left($request->obs) . "\n");
             $printer->text($traco);
 
             // Informações do Produto
             $printer->feed();
-            $printer->text("IMEI 1: " . $request->imei1 . "\n");
-            $printer->text("IMEI 2: " . $request->imei2 . "\n");
+            $printer->text('IMEI 1: ' . $request->imei1 . "\n");
+            $printer->text('IMEI 2: ' . $request->imei2 . "\n");
             $printer->feed();
 
             // Endereço de Entrega
-            $printer->text("Endereco: " . $request->rua . "\n");
-            $printer->text("Bairro: " . $request->bairro . "\n");
-            $printer->text("CEP: " . $request->cep . "\n");
-            $printer->text("Cidade: " . $request->cidade . "\n");
+            $printer->text('Endereco: ' . $request->rua . "\n");
+            $printer->text('Bairro: ' . $request->bairro . "\n");
+            $printer->text('CEP: ' . $request->cep . "\n");
+            $printer->text('Cidade: ' . $request->cidade . "\n");
             $printer->text("UF: PB\n");
-            $printer->text("Complemento: " . $request->complemento . "\n");
-            $printer->text("Numero: " . $request->numero . "\n");
+            $printer->text('Complemento: ' . $request->complemento . "\n");
+            $printer->text('Numero: ' . $request->numero . "\n");
             $printer->feed();
 
             // Finalizar impressão
             $printer->cut();
 
             $printer->text($this->left("Cliente: $request->cliente") . "\n");
-            $printer->text($this->left("CPF/CNPJ: " . $this->formatarDocumento($request->cpf)) . "\n");
-            $printer->text($this->left("Tel: " . $this->formatarCelular($request->contato)) . "\n");
-            $printer->text($this->left("Atendente: " . $request->atendente) . "\n");
-            $printer->text($this->left("Venda nº " . $request->numeroOs) . "\n");
+            $printer->text($this->left('CPF/CNPJ: ' . $this->formatarDocumento($request->cpf)) . "\n");
+            $printer->text($this->left('Tel: ' . $this->formatarCelular($request->contato)) . "\n");
+            $printer->text($this->left('Atendente: ' . $request->atendente) . "\n");
+            $printer->text($this->left('Venda nº ' . $request->numeroOs) . "\n");
             $printer->text($traco);
 
             $printer->feed();
@@ -200,7 +200,11 @@ class PrintrController extends Controller
 
             return;
         } catch (\Throwable $e) {
-            echo "Não foi possível imprimir: " . $e->getMessage() . "\n";
+            echo 'Não foi possível imprimir: ' . $e->getMessage() . "\n";
+        } finally {
+            if ($printer) {
+                $printer->close();
+            }
         }
     }
 
@@ -219,6 +223,7 @@ class PrintrController extends Controller
         $cliente = $this->convertObj($request->cliente);
         $pagamentos = $this->convertObj($request->pagamentos);
         $total_unidade = 0;
+
         try {
             // Configuração da impressora
             $printer = new Printer($this->connector);
@@ -227,31 +232,31 @@ class PrintrController extends Controller
             $printer->setTextSize(2, 2);
             $printer->text($loja->name . "\n \n");
             $printer->setTextSize(1, 1);
-            $printer->text(date("d/m/Y H:i:s", strtotime($pedido->created_at)) . "\n");
+            $printer->text(date('d/m/Y H:i:s', strtotime($pedido->created_at)) . "\n");
             $printer->feed();
             // Detalhes do Cliente
             $printer->setPrintLeftMargin(16 * 2);
             $printer->setJustification(Printer::JUSTIFY_LEFT);
 
             $printer->text($this->left("Cliente: $cliente->nome") . "\n");
-            $printer->text($this->left("CPF/CNPJ: " . $this->formatarDocumento($cliente->cpf)) . "\n");
-            $printer->text($this->left("Tel: " . $this->formatarCelular($cliente->contato)) . "\n");
-            $printer->text($this->left("Atendente: " . $vendedor->name) . "\n");
-            $printer->text($this->left("Orçamento nº " . $pedido->id) . "\n");
+            $printer->text($this->left('CPF/CNPJ: ' . $this->formatarDocumento($cliente->cpf)) . "\n");
+            $printer->text($this->left('Tel: ' . $this->formatarCelular($cliente->contato)) . "\n");
+            $printer->text($this->left('Atendente: ' . $vendedor->name) . "\n");
+            $printer->text($this->left('Orçamento nº ' . $pedido->id) . "\n");
             $printer->text($this->traco);
 
-            $printer->text($this->left("descricao", 14));
-            $printer->text($this->center("Qtd/Unidade ", 14));
-            $printer->text($this->right("Total", 16) . "\n");
+            $printer->text($this->left('descricao', 14));
+            $printer->text($this->center('Qtd/Unidade ', 14));
+            $printer->text($this->right('Total', 16) . "\n");
             $printer->text($this->traco);
 
             // Item
             $taxa_cartao = 0;
             foreach ($produtos as $produto) {
                 $total_unidade += $produto->quantidade;
-                $quantidade = $produto->quantidade . "X";
-                $unitario = "R$ " . number_format($produto->valor_unico, 2, ',', '.');
-                $total = "R$ " . number_format($produto->valor_total, 2, ',', '.');
+                $quantidade = $produto->quantidade . 'X';
+                $unitario = 'R$ ' . number_format($produto->valor_unico, 2, ',', '.');
+                $total = 'R$ ' . number_format($produto->valor_total, 2, ',', '.');
                 $printer->setEmphasis(true);
                 $modelo = $this->inserirQuebraDeLinha(strtoupper($produto->produtos->name), 44);
                 $printer->text($this->left($modelo) . "\n");
@@ -261,14 +266,14 @@ class PrintrController extends Controller
                 $printer->text($this->right($total, 16) . "\n");
                 $printer->feed();
                 if (!empty($produto->imei1)) {
-                    $printer->text("IMEI 1: " . $produto->imei1 . "\n");
+                    $printer->text('IMEI 1: ' . $produto->imei1 . "\n");
                 }
 
                 if (!empty($produto->imei2)) {
-                    $printer->text("IMEI 2: " . $produto->imei2 . "\n");
+                    $printer->text('IMEI 2: ' . $produto->imei2 . "\n");
                 }
                 if (!empty($produto->serial)) {
-                    $printer->text("SERIA : " . $produto->serial . "\n");
+                    $printer->text('SERIA : ' . $produto->serial . "\n");
                 }
 
                 $printer->text($this->traco);
@@ -279,46 +284,45 @@ class PrintrController extends Controller
             $pendente = false;
 
             foreach ($pagamentos as $pagamento) {
-                if ($pagamento->status_pagamento == "Pago") {
+                if ($pagamento->status_pagamento == 'Pago') {
                     $pago = true;
                 }
 
-                if ($pagamento->status_pagamento == "Pendente") {
+                if ($pagamento->status_pagamento == 'Pendente') {
                     $pendente = true;
                 }
 
                 $taxa_cartao += $pagamento->valor_taxas;
             }
 
-            $printer->text($this->left("Total de unidades", 22));
+            $printer->text($this->left('Total de unidades', 22));
             $printer->text($this->right($total_unidade, 22) . "\n");
             $printer->setEmphasis(false);
             $printer->text($this->traco);
             $printer->text($this->left('Subtotal', 22));
-            $printer->text($this->right("R$ " . number_format($pedido->valor_venda, 2, ',', '.'), 22) . "\n");
+            $printer->text($this->right('R$ ' . number_format($pedido->valor_venda, 2, ',', '.'), 22) . "\n");
             $total_a_receber = ($pedido->valor_venda + $taxa_cartao);
             if ($taxa_cartao > 0) {
                 $printer->text($this->left('Taxa OP-Cartão:', 22));
-                $printer->text($this->right("R$ " . number_format($taxa_cartao ?? 0.00, 2, ',', '.'), 23) . "\n");
+                $printer->text($this->right('R$ ' . number_format($taxa_cartao ?? 0.00, 2, ',', '.'), 23) . "\n");
             }
 
             $printer->text($this->traco);
             $printer->setEmphasis(true);
-            $printer->text($this->left("Total a pagar", 22));
-            $printer->text($this->right("R$ " . number_format($total_a_receber, 2, ',', '.'), 22) . "\n");
+            $printer->text($this->left('Total a pagar', 22));
+            $printer->text($this->right('R$ ' . number_format($total_a_receber, 2, ',', '.'), 22) . "\n");
 
             $printer->setEmphasis(false);
             $printer->feed();
 
             if ($pendente) {
                 $printer->text($this->traco);
-                $printer->text($this->center("---- Valor a Receber: ----") . "\n");
+                $printer->text($this->center('---- Valor a Receber: ----') . "\n");
                 foreach ($pagamentos as $pagamento) {
-
-                    if ($pagamento->status_pagamento == "Pendente") {
+                    if ($pagamento->status_pagamento == 'Pendente') {
                         $printer->setEmphasis(true);
                         $printer->text($this->left($pagamento->forma_pagamento, 22));
-                        $printer->text($this->right("R$ " . number_format($pagamento->valor_pago + $pagamento->valor_taxas, 2, ',', '.'), 22) . "\n");
+                        $printer->text($this->right('R$ ' . number_format($pagamento->valor_pago + $pagamento->valor_taxas, 2, ',', '.'), 22) . "\n");
                         $printer->feed();
                     }
                 }
@@ -326,13 +330,13 @@ class PrintrController extends Controller
 
             if ($pago) {
                 $printer->text($this->traco);
-                $printer->text($this->center("---- Valor Pago: ----") . "\n");
+                $printer->text($this->center('---- Valor Pago: ----') . "\n");
                 foreach ($pagamentos as $pagamento) {
-                    if ($pagamento->status_pagamento == "Pago") {
+                    if ($pagamento->status_pagamento == 'Pago') {
                         $total_a_receber -= $pagamento->valor_pago;
                         $printer->setEmphasis(true);
                         $printer->text($this->left($pagamento->forma_pagamento, 22));
-                        $printer->text($this->right("R$ " . number_format($pagamento->valor_pago, 2, ',', '.'), 22) . "\n");
+                        $printer->text($this->right('R$ ' . number_format($pagamento->valor_pago, 2, ',', '.'), 22) . "\n");
                         $printer->feed();
                     }
                 }
@@ -340,36 +344,36 @@ class PrintrController extends Controller
 
             $printer->text($this->traco);
             $printer->setEmphasis(true);
-            $printer->text($this->left("Total a Receber", 22));
-            $printer->text($this->right("R$ " . number_format($total_a_receber, 2, ',', '.'), 22) . "\n");
+            $printer->text($this->left('Total a Receber', 22));
+            $printer->text($this->right('R$ ' . number_format($total_a_receber, 2, ',', '.'), 22) . "\n");
             $printer->feed();
             $printer->feed();
 
 
-            $printer->text($this->center("---- Obs: ----") . "\n");
+            $printer->text($this->center('---- Obs: ----') . "\n");
             $printer->text($this->left($pedido->obs) . "\n");
             $printer->text($this->traco);
 
-            $printer->text("Endereco: " . $cliente->endereco . "\n");
-            $printer->text("Numero: " . $cliente->numero_casa . "\n");
-            $printer->text("Bairro: " . $cliente->bairro . "\n");
-            $printer->text("CEP: " . $cliente->cep . "\n");
-            $printer->text("Cidade: " . $cliente->cidade . "\n");
-            $printer->text("UF:" . $cliente->estado . "\n");
+            $printer->text('Endereco: ' . $cliente->endereco . "\n");
+            $printer->text('Numero: ' . $cliente->numero_casa . "\n");
+            $printer->text('Bairro: ' . $cliente->bairro . "\n");
+            $printer->text('CEP: ' . $cliente->cep . "\n");
+            $printer->text('Cidade: ' . $cliente->cidade . "\n");
+            $printer->text('UF:' . $cliente->estado . "\n");
             $printer->feed();
 
-            $printer->text($this->center("Tudo posso naquele que me fortalece.", 44));
-            $printer->text($this->center("- Filipenses 4:13 -", 44));
+            $printer->text($this->center('Tudo posso naquele que me fortalece.', 44));
+            $printer->text($this->center('- Filipenses 4:13 -', 44));
             $printer->feed();
             $printer->feed();
 
             $printer->cut();
 
             $printer->text($this->left("Cliente: $cliente->nome") . "\n");
-            $printer->text($this->left("CPF/CNPJ: " . $this->formatarDocumento($cliente->cpf)) . "\n");
-            $printer->text($this->left("Tel: " . $this->formatarCelular($cliente->contato)) . "\n");
-            $printer->text($this->left("Atendente: " . $vendedor->name) . "\n");
-            $printer->text($this->left("Orçamento nº " . $pedido->id) . "\n");
+            $printer->text($this->left('CPF/CNPJ: ' . $this->formatarDocumento($cliente->cpf)) . "\n");
+            $printer->text($this->left('Tel: ' . $this->formatarCelular($cliente->contato)) . "\n");
+            $printer->text($this->left('Atendente: ' . $vendedor->name) . "\n");
+            $printer->text($this->left('Orçamento nº ' . $pedido->id) . "\n");
             $printer->text($this->traco);
 
             $printer->feed();
@@ -380,7 +384,11 @@ class PrintrController extends Controller
 
             return response()->json(['success' => 'Impresso com sucesso']);
         } catch (\Throwable $e) {
-            return response()->json(["error" => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()]);
+        } finally {
+            if ($printer) {
+                $printer->close();
+            }
         }
     }
 
@@ -409,30 +417,30 @@ class PrintrController extends Controller
             $printer->text($this->center($loja->name, 14) . "\n");
             $printer->feed();
             $printer->setTextSize(1, 1);
-            $printer->text(date("d/m/Y H:i:s", strtotime($pedido->created_at ?? '')) . "\n");
+            $printer->text(date('d/m/Y H:i:s', strtotime($pedido->created_at ?? '')) . "\n");
             $printer->feed();
             // Detalhes do Cliente
             $printer->setPrintLeftMargin(16 * 2);
             $printer->setJustification(Printer::JUSTIFY_LEFT);
 
-            $printer->text($this->left("Cliente:" . $cliente->nome ?? '') . "\n");
-            $printer->text($this->left("Tel: " . $this->formatarCelular(($request->contato ?? ''))) . "\n");
+            $printer->text($this->left('Cliente:' . $cliente->nome ?? '') . "\n");
+            $printer->text($this->left('Tel: ' . $this->formatarCelular(($request->contato ?? ''))) . "\n");
 
-            $printer->text($this->left("Atendente: " . ($pedido->atendente ?? '')) . "\n");
-            $printer->text($this->left("Pedido:" . $pedido->id) . "\n");
+            $printer->text($this->left('Atendente: ' . ($pedido->atendente ?? '')) . "\n");
+            $printer->text($this->left('Pedido:' . $pedido->id) . "\n");
             $printer->text($traco);
 
-            $printer->text($this->left("descricao", 14));
-            $printer->text($this->center("Qtd/Unidade ", 14));
-            $printer->text($this->right("Total", 16) . "\n");
+            $printer->text($this->left('descricao', 14));
+            $printer->text($this->center('Qtd/Unidade ', 14));
+            $printer->text($this->right('Total', 16) . "\n");
             $printer->text($traco);
 
             // Item
             foreach ($produtos as $produto) {
                 $total_unidade += $produto->quantidade;
-                $quantidade = $produto->quantidade . "X";
-                $unitario = "R$ " . number_format($produto->valor_unico, 2, ',', '.');
-                $total = "R$ " . number_format($produto->valor_total, 2, ',', '.');
+                $quantidade = $produto->quantidade . 'X';
+                $unitario = 'R$ ' . number_format($produto->valor_unico, 2, ',', '.');
+                $total = 'R$ ' . number_format($produto->valor_total, 2, ',', '.');
 
                 $printer->setEmphasis(true);
                 $printer->text($this->left($produto->name) . "\n");
@@ -444,22 +452,22 @@ class PrintrController extends Controller
                 $printer->setEmphasis(true);
             }
 
-            $printer->text($this->left("Total de unidades", 22));
+            $printer->text($this->left('Total de unidades', 22));
             $printer->text($this->right($total_unidade, 22) . "\n");
             $printer->setEmphasis(false);
             $printer->text($traco);
             $printer->text($this->left('Subtotal', 22));
-            $printer->text($this->right("R$ " . number_format($pedido->valor_venda, 2, ',', '.'), 22) . "\n");
+            $printer->text($this->right('R$ ' . number_format($pedido->valor_venda, 2, ',', '.'), 22) . "\n");
 
             $printer->text($traco);
             $printer->setEmphasis(true);
-            $printer->text($this->left("Total a pagar", 22));
-            $printer->text($this->right("R$ " . number_format($pedido->valor_venda, 2, ',', '.'), 22) . "\n");
+            $printer->text($this->left('Total a pagar', 22));
+            $printer->text($this->right('R$ ' . number_format($pedido->valor_venda, 2, ',', '.'), 22) . "\n");
 
             $printer->setEmphasis(false);
 
             $printer->feed();
-            $printer->text($this->center("---- Forma de Pagamento: ----") . "\n");
+            $printer->text($this->center('---- Forma de Pagamento: ----') . "\n");
             // Detalhes de Pagamento
 
             $form = [
@@ -474,19 +482,19 @@ class PrintrController extends Controller
                 if ($pagamento > 0) {
                     $printer->setEmphasis(true);
                     $printer->text($this->left($key, 22));
-                    $printer->text($this->right("R$ " . number_format($pagamento, 2, ',', '.'), 22) . "\n");
+                    $printer->text($this->right('R$ ' . number_format($pagamento, 2, ',', '.'), 22) . "\n");
                     $printer->feed();
                 }
             }
 
             $printer->text($traco);
             $printer->setEmphasis(true);
-            $printer->text($this->left("Total a pago", 22));
-            $printer->text($this->right("R$ " . number_format($pedido->valor_venda, 2, ',', '.'), 22) . "\n");
+            $printer->text($this->left('Total a pago', 22));
+            $printer->text($this->right('R$ ' . number_format($pedido->valor_venda, 2, ',', '.'), 22) . "\n");
             $printer->feed();
             $printer->feed();
-            $printer->text($this->center("Tudo posso naquele que me fortalece.", 44));
-            $printer->text($this->center("- Filipenses 4:13 -", 44));
+            $printer->text($this->center('Tudo posso naquele que me fortalece.', 44));
+            $printer->text($this->center('- Filipenses 4:13 -', 44));
             $printer->feed();
             $printer->feed();
             $printer->cut();
@@ -494,7 +502,11 @@ class PrintrController extends Controller
 
             return response()->json(['success' => 'Impresso com sucesso']);
         } catch (\Throwable $e) {
-            return response()->json(["error" => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()]);
+        } finally {
+            if ($printer) {
+                $printer->close();
+            }
         }
     }
 
@@ -507,6 +519,7 @@ class PrintrController extends Controller
         $printer->feed();
         $printer->cut();
         $printer->close();
+
         try {
             $printer = new Printer($this->connector);
             $traco = str_repeat('-', max(0, 44));
@@ -515,18 +528,18 @@ class PrintrController extends Controller
             $printer->setJustification(Printer::JUSTIFY_LEFT);
 
             $printer->setEmphasis(true);
-            $printer->text("Modelo: " . $this->left($request->modelo . '  ' . $request->cor) . "\n");
+            $printer->text('Modelo: ' . $this->left($request->modelo . '  ' . $request->cor) . "\n");
             $printer->setEmphasis(false);
 
             $traco = $traco . "\n";
 
             $printer->text($this->left("Cliente: $request->cliente") . "\n");
-            $printer->text("Endereco: " . $request->rua . "\n");
-            $printer->text("Bairro: " . $request->bairro . "\n");
-            $printer->text("Cidade: " . $request->cidade . "\n");
-            $printer->text("Cep: " . $request->cep . "\n");
+            $printer->text('Endereco: ' . $request->rua . "\n");
+            $printer->text('Bairro: ' . $request->bairro . "\n");
+            $printer->text('Cidade: ' . $request->cidade . "\n");
+            $printer->text('Cep: ' . $request->cep . "\n");
             $printer->text("UF: PB\n");
-            $printer->text($this->left("Venda nº " . $request->numeroOs) . "\n");
+            $printer->text($this->left('Venda nº ' . $request->numeroOs) . "\n");
 
             $delivery = $request->delivery == '0' ? 'Retira em Loja' : 'Entrega em Domicilio';
 
@@ -537,15 +550,21 @@ class PrintrController extends Controller
             $printer->feed();
             $printer->cut();
             $printer->close();
+
             return;
         } catch (\Throwable $e) {
-            echo "Não foi possível imprimir: " . $e->getMessage() . "\n";
+            echo 'Não foi possível imprimir: ' . $e->getMessage() . "\n";
+        } finally {
+            if ($printer) {
+                $printer->close();
+            }
         }
     }
 
     public function novoAviso(Request $request)
     {
         $this->traco = str_repeat('-', max(0, 44)) . "\n";
+
         try {
             $printer = new Printer($this->connector);
             $printer->setPrintLeftMargin(16 * 2);
@@ -560,12 +579,12 @@ class PrintrController extends Controller
             }
 
             $printer->text($this->left("Cliente: $request->cliente") . "\n");
-            $printer->text("Endereço: " . $request->rua . ', N°' . $request->numero_casa . "\n");
-            $printer->text("Bairro: " . $request->bairro . "\n");
-            $printer->text("Cidade: " . $request->cidade . "\n");
-            $printer->text("Cep: " . $request->cep . "\n");
+            $printer->text('Endereço: ' . $request->rua . ', N°' . $request->numero_casa . "\n");
+            $printer->text('Bairro: ' . $request->bairro . "\n");
+            $printer->text('Cidade: ' . $request->cidade . "\n");
+            $printer->text('Cep: ' . $request->cep . "\n");
             $printer->text("UF: PB\n");
-            $printer->text($this->left("Venda nº " . $request->venda_id) . "\n");
+            $printer->text($this->left('Venda nº ' . $request->venda_id) . "\n");
             $delivery = $request->delivery == 0 ? 'Retira em Loja' : 'Entrega em Domicilio';
 
             $printer->setJustification(Printer::JUSTIFY_CENTER);
@@ -575,10 +594,23 @@ class PrintrController extends Controller
             $printer->feed();
             $printer->cut();
             $printer->close();
+
             return;
         } catch (\Throwable $e) {
-            return response()->json(['error' => "Não foi possível imprimir: " . $e->getMessage()]);
+            return response()->json(['error' => 'Não foi possível imprimir: ' . $e->getMessage()]);
+        } finally {
+            if ($printer) {
+                $printer->close();
+            }
         }
+    }
+
+    public function traco($printer)
+    {
+        $traco = str_repeat('-', max(0, 44));
+        $printer->setTextSize(1, 1);
+
+        return $printer->text($this->left($traco) . "\n");
     }
 
     public function dadosCliente(Request $request)
@@ -600,10 +632,10 @@ class PrintrController extends Controller
 
             $traco = $traco . "\n";
             $printer->setEmphasis(true);
-            $printer->text("Endereço: " . $request->endereco . "\n");
-            $printer->text("Bairro: " . $request->bairro . "\n");
-            $printer->text("Cidade: " . $request->cidade . "\n");
-            $printer->text($this->left("UF: " . $request->estado) . "\n");
+            $printer->text('Endereço: ' . $request->endereco . "\n");
+            $printer->text('Bairro: ' . $request->bairro . "\n");
+            $printer->text('Cidade: ' . $request->cidade . "\n");
+            $printer->text($this->left('UF: ' . $request->estado) . "\n");
             $delivery = $request->delivery == false ? 'Retira em Loja' : 'Entrega em Domicilio';
 
             $printer->setJustification(Printer::JUSTIFY_CENTER);
@@ -613,33 +645,41 @@ class PrintrController extends Controller
             $printer->feed();
 
             $printer->setTextSize(1, 1);
-            $printer->text($this->center("Tudo posso naquele que me fortalece.", 44));
-            $printer->text($this->center("- Filipenses 4:13 -", 44));
+            $printer->text($this->center('Tudo posso naquele que me fortalece.', 44));
+            $printer->text($this->center('- Filipenses 4:13 -', 44));
             $printer->feed();
             $printer->feed();
             $printer->cut();
             $printer->close();
+
             return;
         } catch (\Throwable $e) {
-            return response()->json(["error" => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()]);
+        } finally {
+            if ($printer) {
+                $printer->close();
+            }
         }
     }
 
     private function left($texto, $quantidadeCaracter = 44)
     {
         $espacos = str_repeat(' ', max(0, ($quantidadeCaracter) - strlen($texto)));
+
         return $texto . $espacos;
     }
 
     private function center($texto, $quantidadeCaracter = 44)
     {
         $espacos = str_repeat(' ', max(0, (($quantidadeCaracter) - strlen($texto)) / 2));
+
         return $espacos . $texto . $espacos;
     }
 
     private function right($texto, $quantidadeCaracter = 44)
     {
         $espacos = str_repeat(' ', max(0, ($quantidadeCaracter) - strlen($texto)));
+
         return $espacos . $texto;
     }
 
@@ -661,21 +701,21 @@ class PrintrController extends Controller
             $printer->text($this->center($loja->tipo, 14) . "\n");
             $printer->feed();
             $printer->setTextSize(1, 1);
-            $printer->text(date("d/m/Y H:i:s", strtotime($loja->created_at ?? '')) . "\n");
+            $printer->text(date('d/m/Y H:i:s', strtotime($loja->created_at ?? '')) . "\n");
             $printer->feed();
             // Detalhes do Cliente
             $printer->setPrintLeftMargin(16 * 2);
             $printer->setJustification(Printer::JUSTIFY_LEFT);
 
-            $printer->text($this->left("Cliente:" . $loja->name ?? '') . "\n");
+            $printer->text($this->left('Cliente:' . $loja->name ?? '') . "\n");
 
-            $printer->text($this->left("Atendente: " . ($loja->atendente ?? '')) . "\n");
-            $printer->text($this->left("Pedido:" . $loja->idPedido) . "\n");
+            $printer->text($this->left('Atendente: ' . ($loja->atendente ?? '')) . "\n");
+            $printer->text($this->left('Pedido:' . $loja->idPedido) . "\n");
             $printer->text($traco);
 
-            $printer->text($this->left("descricao", 14));
-            $printer->text($this->center("Qtd/Unidade ", 14));
-            $printer->text($this->right("Total", 16) . "\n");
+            $printer->text($this->left('descricao', 14));
+            $printer->text($this->center('Qtd/Unidade ', 14));
+            $printer->text($this->right('Total', 16) . "\n");
             $printer->text($traco);
 
             // Item
@@ -683,9 +723,9 @@ class PrintrController extends Controller
                 $subtotal = ($produto->price_purchase * $produto->estoque);
                 $valorTotalPedido += $subtotal;
                 $total_unidade += $produto->estoque;
-                $quantidade = $produto->estoque . "X";
-                $unitario = "R$ " . number_format($produto->price_purchase, 2, ',', '.');
-                $total = "R$ " . number_format($subtotal, 2, ',', '.');
+                $quantidade = $produto->estoque . 'X';
+                $unitario = 'R$ ' . number_format($produto->price_purchase, 2, ',', '.');
+                $total = 'R$ ' . number_format($subtotal, 2, ',', '.');
 
                 $printer->setEmphasis(true);
                 $printer->text($this->left($produto->name) . "\n");
@@ -697,7 +737,7 @@ class PrintrController extends Controller
             }
 
             $printer->text($traco);
-            $printer->text($this->left("Total de Modelo", 22));
+            $printer->text($this->left('Total de Modelo', 22));
             $printer->text($this->right(count($produtos), 22) . "\n");
             $printer->setEmphasis(false);
             $printer->text($traco);
@@ -711,7 +751,11 @@ class PrintrController extends Controller
 
             return response()->json(['success' => 'Impresso com sucesso']);
         } catch (\Throwable $th) {
-            return response()->json(["error" => $th->getMessage()]);
+            return response()->json(['error' => $th->getMessage()]);
+        } finally {
+            if ($printer) {
+                $printer->close();
+            }
         }
     }
 
@@ -740,15 +784,15 @@ class PrintrController extends Controller
                 $printer->setPrintLeftMargin(16 * 2);
                 $printer->setJustification(Printer::JUSTIFY_LEFT);
 
-                $printer->text($this->left("Cliente:" . $dados->loja ?? '') . "\n");
-                $printer->text($this->left("Pedido:" . $dados->idPedido) . "\n");
+                $printer->text($this->left('Cliente:' . $dados->loja ?? '') . "\n");
+                $printer->text($this->left('Pedido:' . $dados->idPedido) . "\n");
                 $printer->text($traco);
                 $printer->feed();
                 $printer->feed();
 
                 $printer->setJustification(Printer::JUSTIFY_CENTER);
                 $printer->setTextSize(3, 3);
-                $printer->text($this->center("(" . ($i + 1) . "/" . $cupon . ")", 14) . "\n");
+                $printer->text($this->center('(' . ($i + 1) . '/' . $cupon . ')', 14) . "\n");
                 $printer->feed();
                 $printer->feed();
 
@@ -759,7 +803,130 @@ class PrintrController extends Controller
 
             return response()->json(['success' => 'Impresso com sucesso']);
         } catch (\Throwable $th) {
-            return response()->json(["error" => $th->getMessage()]);
+            return response()->json(['error' => $th->getMessage()]);
+        } finally {
+            if ($printer) {
+                $printer->close();
+            }
         }
+    }
+
+    public function PrintOrderEcommerce(Request $request)
+    {
+        try {
+            $printer = new Printer($this->connector);
+            $order = DecryptionController::decrypt($request->all());
+            $client = $order->order;
+            $address = $client->address;
+            $product = $order->orderItem;
+
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->setTextSize(2, 2);
+            $printer->text($this->center('Pedido E-Commerce', 14) . "\n");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $this->traco($printer);
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text($this->center('ID:#' . mb_strtoupper($client->hash_id), 14) . "\n");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $this->traco($printer);
+            $printer->feed();
+
+            $printer->setPrintLeftMargin(16 * 2);
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->text($this->left("Cliente: $client->name") . "\n");
+            $printer->text($this->left('CPF/CNPJ: ' . $this->formatarDocumento($client->cpf)) . "\n");
+            $printer->text($this->left('Tel: ' . $this->formatarCelular($client->whatsapp ?? '')) . "\n");
+            if ($client->atacado) {
+                $printer->text($this->left('Loja: ' . $this->left($client->name_fantasia ?? '')) . "\n");
+            }
+
+            if ($address?->address) {
+                $printer->setTextSize(1, 2);
+                $printer->text($this->center('---- Endereço para Entrega: ----') . "\n \n");
+                $printer->setTextSize(1, 1);
+                $printer->text('Endereco: ' . $address->address . "\n");
+                $printer->text('Numero: ' . $address->number . "\n");
+                $printer->text('Bairro: ' . $address->neighborhood . "\n");
+                $printer->text('CEP: ' . $address->zipcode . "\n");
+                $printer->text('Cidade: ' . $address->city . "\n");
+                $printer->text('UF:' . $address->state . "\n");
+                $printer->feed();
+            } else {
+                $printer->setTextSize(1, 2);
+                $printer->text($this->center('---- Retirada em Loja: ----') . "\n \n");
+                $printer->setTextSize(1, 1);
+            }
+
+
+            $printer->text($this->left('Qtd/Unidade', 14));
+            $printer->text($this->center('Valor uni.', 14));
+            $printer->text($this->right('S-Total', 15) . "\n");
+            $printer->text($this->traco);
+            // Item
+            $total = 0;
+            foreach ($product as $item) {
+                $total += $item->sub_total;
+                $printer->setEmphasis(true);
+                $printer->text($this->left($item->name) . "\n");
+                $printer->setEmphasis(false);
+                $printer->text($this->left($item->quantity . 'x', 14));
+                $printer->text($this->center($this->money($item->price), 14));
+                $printer->text($this->right($this->money($item->sub_total), 16) . "\n");
+                $printer->text($this->traco);
+                $printer->setEmphasis(true);
+            }
+
+            $printer->text($this->left('Total Prdutos', 22));
+            $printer->text($this->right($this->money($total), 22) . "\n");
+            $printer->setEmphasis(false);
+            $total += ($client?->taxa_entrega ?? 0) + ($client?->taxa_cartao ?? 0);
+            $printer->text($this->left('Taxa Entr./Frete', 22));
+            $printer->text($this->right('R$ ' . $this->money($client->taxa_entrega ?? 0.00), 22) . "\n");
+            if ($client?->taxa_cartao ?? null) {
+                $printer->text($this->left('Taxa OP-Cartão:', 22));
+                $printer->text($this->right('R$ ' . $this->money($client->taxa_cartao ?? 0.00), 23) . "\n");
+            }
+
+            $printer->text($this->traco);
+
+            $printer->text($this->left('Total a Pagar ', 22));
+            $printer->text($this->right('R$ ' . number_format($total, 2, ',', '.'), 22) . "\n");
+            $printer->setEmphasis(false);
+            if ($client->payment_status == 'pending') {
+                $printer->feed();
+                $printer->setTextSize(1, 2);
+                $printer->text($this->center('---- Valor a Receber: ----') . "\n");
+                $printer->setTextSize(1, 1);
+                $printer->setEmphasis(true);
+                $printer->text($this->left($client->payment_method == 'Credit card' ? 'Cartão de Credito' : $client->payment_method, 22));
+                $printer->text($this->right('R$ ' . number_format($total, 2, ',', '.'), 22) . "\n");
+                if ($client->payment_method == 'Credit card') {
+                    $printer->text($this->left('Parcelado em ' . $client->installments) . "\n");
+                }
+                $printer->feed();
+            }
+
+            $printer->text($this->center('Tudo posso naquele que me fortalece.', 44));
+            $printer->text($this->center('- Filipenses 4:13 -', 44));
+            $printer->feed();
+            $printer->feed();
+            $printer->cut();
+
+            return response()->json(['success' => 'Impresso com sucesso']);
+        } catch (\Throwable $th) {
+            return response()->json(['success' => $th->getMessage()]);
+        } finally {
+            if ($printer) {
+                $printer->close();
+            }
+        }
+
+
+        return;
+    }
+
+    public function money($money)
+    {
+        return number_format($money, 2, ',', '.');
     }
 }
