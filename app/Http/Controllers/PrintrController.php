@@ -567,16 +567,19 @@ class PrintrController extends Controller
 
         try {
             $printer = new Printer($this->connector);
-            $printer->setPrintLeftMargin(16 * 2);
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
 
+
+            $printer->setPrintLeftMargin(16 * 2);
+
+            $printer->setEmphasis(true);
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
             foreach ($request->produto as $produto) {
                 $modelo = $this->inserirQuebraDeLinha(strtoupper($produto['produto']['name']), 44);
                 $printer->setEmphasis(true);
-                $printer->text($this->left($modelo));
-                $printer->setEmphasis(false);
-                $printer->text($this->traco);
+                $printer->text($this->left($modelo) . "\n");
+                $printer->text($this->left($this->traco) . "\n");
             }
+
 
             $printer->text($this->left("Cliente: $request->cliente") . "\n");
             $printer->text('Endereço: ' . $request->rua . ', N°' . $request->numero_casa . "\n");
@@ -585,12 +588,15 @@ class PrintrController extends Controller
             $printer->text('Cep: ' . $request->cep . "\n");
             $printer->text("UF: PB\n");
             $printer->text($this->left('Venda nº ' . $request->venda_id) . "\n");
+            $printer->text($this->left('Vendedorª ' . $request->vendedor) . "\n");
             $delivery = $request->delivery == 0 ? 'Retira em Loja' : 'Entrega em Domicilio';
 
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->setTextSize(2, 2);
             $printer->feed();
             $printer->text($delivery . "\n");
+            $printer->feed();
+            $printer->text($request->venda_local_nome . "\n");
             $printer->feed();
             $printer->cut();
             $printer->close();
